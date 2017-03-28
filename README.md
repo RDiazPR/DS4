@@ -1,5 +1,5 @@
 Project: DS4 Box  
-Description: Complement for DS4 (Diamond System 4), at the Enginnering Research Complex, Michigan State University (2017).  
+Description: Complement for DS4 (Diamond System 4), at the Enginnering Research Complex, Michigan State University.  
 Developed by: Ramón D. Díaz(diazramo@msu.edu), and Amanda Charris (charrish@msu.edu)  
 Date: March 28, 2017  
 Album: https://goo.gl/photos/V7rgzJPYvsKiMwxo7  
