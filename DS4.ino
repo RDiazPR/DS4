@@ -142,7 +142,7 @@ void loop() {
   
   if (cam >= 300){ // 300 = 5minutes (DS4), 2 = 2 seconds (DS3) 
    digitalWrite(CH1, LOW);  //Press shutter button for 0.5 seconds
-   delay(100); //1000
+   delay(1000); // Around 1s to wake up the camera from stand-by mode
    seg = seg + 1; //add this delay to the main counter.
    digitalWrite(CH1,HIGH);    //Release shutter button
    //delay(300000);             //Wait 5 minutes before next selfie
