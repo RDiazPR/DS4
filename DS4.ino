@@ -38,19 +38,21 @@ const int pyroIN = A5; //pyrometer analog input
 int seg = 0;
 int cam = 300; // start at 300 to take a picture on the first iteration.
 int numReadings = 100; //cantidad de medidas (minimo una medida por muestreo)
-float medida; //init
-float medidaFull; //init
-int espera = 1000; //miliseconds to wait between measurements
+float medida; //init ADC measurement
+float medidaFull; //init array
+float Temp; //temperature
 int del = 10;
 int c = 1087; //calibration cosntant
- 
- #define CH1 8   // Connect Digital Pin 8 on Arduino to CH1 on Relay Module
- #define CH3 7   // Connect Digital Pin 7 on Arduino to CH3 on Relay Module
+#define CH1 8   // Connect Digital Pin 8 on Arduino to CH1 on Relay Module
+#define CH3 7   // Connect Digital Pin 7 on Arduino to CH3 on Relay Module
+
+
+int wait = 120; // seconds to wait between pictures
+int espera = 1000; //miliseconds to wait between pyrometer measurements
  
  
 void setup() {
   analogReference(EXTERNAL);
-  //pinMode(13, OUTPUT);
   
   // Open serial communications and wait for port to open:
   //Serial.begin(9600);
@@ -83,7 +85,7 @@ void setup() {
     dataString += "\t";
     dataString += "Data(#)"; //medida cruda
     dataString += "\t";
-    dataString += "Temp (C)"; //conversion
+    dataString += "Temp (C)"; //temperature
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
@@ -104,24 +106,25 @@ void setup() {
 
 void loop() {
 
-  //digitalWrite(13, HIGH);   // turn the LED on 
-
   // average number of readings
   medidaFull = 0;
    for (int i=0; i < numReadings; i++){     // meaure and capture in array
     medidaFull = medidaFull + analogRead(A5);      
     delay(del);
     //Serial.println(medidaFull/(i+1));
-   } 
+  } 
   medida = (float)medidaFull/(float)numReadings;  //average
-  //digitalWrite(13, LOW);   // turn the LED on
-  
+  Temp = (medida/1024)*c+600; //conversion 
+  if (Temp<700){ //filter out temperatures lower than 700C
+      Temp = 0;
+  }//end if
+    
   // make a string for assembling the data to log:
     String dataString = String(seg); //time measurement
     dataString += "\t";
     dataString += String(medida); //medida cruda
     dataString += "\t";
-    dataString += (medida/1024)*c+600; //conversion
+    dataString += String(Temp); //Temperature measurement
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
@@ -140,9 +143,9 @@ void loop() {
   }
   //delay(espera-del*numReadings); // se resta el tiempo que ya ha transcurrido de las medidas.
   
-  if (cam >= 300){ // 300 = 5minutes (DS4), 2 = 2 seconds (DS3) 
+  if (cam >= wait){ // 300 = 5minutes (DS4), 2 = 2 seconds (DS3) 
    digitalWrite(CH1, LOW);  //Press shutter button for 0.5 seconds
-   delay(1000); // Around 1s to wake up the camera from stand-by mode
+   delay(1000); //1000
    seg = seg + 1; //add this delay to the main counter.
    digitalWrite(CH1,HIGH);    //Release shutter button
    //delay(300000);             //Wait 5 minutes before next selfie
